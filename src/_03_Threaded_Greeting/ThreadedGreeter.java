@@ -2,7 +2,6 @@ package _03_Threaded_Greeting;
 
 public class ThreadedGreeter implements Runnable {
 int num;
-Thread message;
 public ThreadedGreeter(int num) {
 	this.num = num;
 }
@@ -10,16 +9,17 @@ public ThreadedGreeter(int num) {
 	public void run() {
 		// TODO Auto-generated method stub
 		System.out.println("Hello from thread #: "+num);
-		if(num<=50) {
-			 message = new Thread(()-> new ThreadedGreeter(num=num+1));	
+		if(num<50) {
+			 Thread message = new Thread(new ThreadedGreeter(num+1));	
+				message.start();
+				try {
+					message.join();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 		}
-		message.start();
-		try {
-			message.join();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
 	}
 
 }
