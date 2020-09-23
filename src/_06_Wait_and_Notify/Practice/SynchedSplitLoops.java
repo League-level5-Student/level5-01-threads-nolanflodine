@@ -1,5 +1,7 @@
 package _06_Wait_and_Notify.Practice;
 
+import _05_Synchronized_Swimming.Swimmer;
+
 /*
  
 Below are two threads. One thread increments the counter
@@ -17,17 +19,35 @@ printed in order.
 
 public class SynchedSplitLoops {
 	static int counter = 0;
-	
+	private static final Object thing = new Object();
+	static Thread t1;
+	static Thread t2;
 	public static void main(String[] args) {
-		Thread t1 = new Thread(() -> {
+		 t1 = new Thread(() -> {
 			for(int i = 0; i < 100000; i++) {
+				synchronized(thing) {
 				counter++;
+				thing.notify(); //let other threads waiting on threadLock know that they can start
+				try {
+					thing.wait(); //pauses execution until another thread calls notify using threadLock
+				} catch (InterruptedException e) {
+					System.out.println("error!");
+				}
+				}
 			}
 		});
 		
-		Thread t2 = new Thread(() -> {
+		 t2 = new Thread(() -> {
 			for(int i = 0; i < 100000; i++) {
+				synchronized(thing) {
 				System.out.println(counter);
+				thing.notify(); //let other threads waiting on threadLock know that they can start
+				try {
+					thing.wait(); //pauses execution until another thread calls notify using threadLock
+				} catch (InterruptedException e) {
+					System.out.println("error!");
+				}
+				}
 			}
 		});
 		
@@ -41,5 +61,12 @@ public class SynchedSplitLoops {
 			System.err.println("Could not join threads");
 		}
 		
+		
 	}
+	/*private static void swimLap(Thread thread) throws InterruptedException {
+		synchronized (thing) {
+			
+		}
+	}
+	*/
 }
